@@ -47,12 +47,17 @@ io.on('connection', socket => {
             let message = `${users[id].username} » ${message}`,
                 timestamp = Date.now()
 
-            socket.broadcast({
+            socket.broadcast.emit('userMessage', {
                 message: message,
                 by: users[id].username,
                 timestamp: timestamp
             });
         });
+    });
+
+    socket.on("disconnect", async () => {
+        await socket.broadcast.emit("userDisconnect", users[id].username);
+        delete users[id]
     });
 });
 
