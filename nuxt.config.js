@@ -1,54 +1,28 @@
 
 export default {
-  mode: 'universal',
-  /*
-  ** Headers of the page
-  */
+  mode: 'spa',
   head: {
-    title: process.env.npm_package_name || '',
+    title: 'BotChat',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
+      { hid: 'description', name: 'description', content: 'NKO 2019 project by WumDev. A chat bot capable of a lot.' },
+      { property: 'og:image', content: '/botchat.png'}
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
-  /*
-  ** Customize the progress-bar color
-  */
   loading: { color: '#fff' },
-  /*
-  ** Global CSS
-  */
   css: [
+    '@/assets/css/animate.css'
   ],
-  /*
-  ** Plugins to load before mounting the App
-  */
-  plugins: [
-  ],
-  /*
-  ** Nuxt.js dev-modules
-  */
+  plugins: [],
   buildModules: [
-    // Doc: https://github.com/nuxt-community/nuxt-tailwindcss
     '@nuxtjs/tailwindcss',
   ],
-  /*
-  ** Nuxt.js modules
-  */
-  modules: [
-  ],
-  /*
-  ** Build configuration
-  */
+  modules: [],
   build: {
-    /*
-    ** You can extend webpack config here
-    */
-    extend (config, ctx) {
-    }
+    extend (config, ctx) {}
   }
 }
