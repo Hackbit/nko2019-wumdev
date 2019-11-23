@@ -6,6 +6,7 @@ const router = new Router();
 
 router.get('/', (ctx, next) => {
     ctx.body = "Hello World";
+    next()
 });
 
 app.use(router.routes()).use(router.allowedMethods());
