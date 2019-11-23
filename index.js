@@ -21,9 +21,11 @@ let users = {};
 // };
 
 io.on('connection', socket => {
+    socket.join('General');
     socket.on('data', data => {
         if(!data.username) return socket.emit('error', { code: 0, msg: "Invalid username" });
         let id = genId();
+        let randColor = color(Math.floor(Math.random() * 20), 20);
         users[id] = {
             username: data.username,
             socketId: socket.id,
@@ -31,34 +33,28 @@ io.on('connection', socket => {
         }
 
         socket.emit("clientData", {
-            color: color(Math.floor(Math.random() * 20), 20),
-            id: id,
-            rooms: Object.keys(rooms)
+            color: randColor,
+            id: id
         });
-
-        // socket.on('changeRoom', async room => {
-        //     let current = Object.keys(socket.rooms)[1];
-        //     await socket.leave(current);
-        //     joinRoom(socket, room)
-        // });
 
         socket.on('message', async message => {
             // logic when message is sent
-            let message = `${users[id].username} » ${message}`,
-                timestamp = Date.now(),
-                encoded = new Buffer(message).toString('base64')
+            let msg = `${users[id].username} » ${message}`,
+                timestamp = new Date(Date.now()).toLocaleString("en-US"),
+                encoded = new Buffer(msg).toString('base64')
 
-            socket.broadcast.emit('userMessage', {
+            socket.to('General').broadcast.emit('userMessage', {
                 message: encoded,
                 by: users[id].username,
-                timestamp: timestamp
+                timestamp: timestamp,
+                color: randColor
             });
         });
-    });
 
-    socket.on("disconnect", async () => {
-        await socket.broadcast.emit("userDisconnect", users[id].username);
-        delete users[id]
+        socket.on("disconnect", async () => {
+            await socket.broadcast.emit("userDisconnect", users[id].username);
+            delete users[id]
+        });
     });
 });
 
@@ -78,17 +74,3 @@ function color(length, maxLength) {
 function genId() {
     return new randExp(/[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{6}/).gen();
 }
-
-// /**
-//  * 
-//  * @param {SocketIO.Socket} socket 
-//  * @param {String} room 
-//  */
-// function joinRoom(socket, room) {
-//     let roomArr = Object.keys(rooms);
-//     if(!roomArr.find(a => a == room)) return socket.emit('error', { code: 1, msg: "Invalid room"} );
-//     if(rooms[room]["users"].find(a => a == users[id].id)) return;
-
-//     await socket.join(room)
-//     rooms[room]["users"].push(id);
-// }
