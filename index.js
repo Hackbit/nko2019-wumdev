@@ -14,11 +14,6 @@ app.use(bodyParser.json());
 app.use(express.static('./public'));
 
 let users = {};
-// let rooms = {
-//     "General": {
-//         "users": []
-//     }
-// };
 
 io.on('connection', socket => {
     socket.join('General');
