@@ -1,77 +1,49 @@
 <template>
   <div class="container">
-    <div>
-      <logo />
-      <h1 class="title">
-        botchat
-      </h1>
-      <h2 class="subtitle">
-        NKO 2019 project by WumDev. A chat bot capable of a lot.
-      </h2>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
+    <h1 class="text-6xl font-display z-10 top-0 fixed w-full bg-black" ref="title">BotChat</h1>
+    <div class="w-full messages self-end flex-grow flex flex-col" ref="messages">
+      <bot-message>Hello World</bot-message>
+      <user-message>Check this out!</user-message>
     </div>
+    <input autofocus type="text" v-model="message" placeholder="Enter your message!" class="z-10 inset-x-0 bottom-0 fixed border bg-black w-full my-1 text-gray-300 text-right px-4 rounded-lg outline-none" @keydown.enter="createMessage" />
   </div>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
+  import BotMessage from '../components/BotMessage';
+  import Vue from 'vue';
+  import UserMessage from '../components/UserMessage';
+  let Message = Vue.extend(UserMessage);
 
-export default {
-  components: {
-    Logo
+  export default {
+    components: { UserMessage, BotMessage },
+    data() {
+      return {message: ''}
+    },
+    methods: {
+      createMessage() {
+        let newMessage = new Message();
+        newMessage.$slots.default = [ this.message ];
+        newMessage.$mount();
+        this.$refs.messages.appendChild(newMessage.$el);
+        this.message = '';
+      }
+    }
   }
-}
 </script>
 
 <style>
-/* Sample `apply` at-rules with Tailwind CSS
-.container {
-  @apply min-h-screen flex justify-center items-center text-center mx-auto;
-}
-*/
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
+  input {
+    padding: 4px;
+  }
+  .container {
+    @apply min-h-screen flex items-center text-center mx-6 flex-col;
+    max-width: 90%;
+  }
+  .messages {
+    margin-top: 128px;
+    margin-bottom: 64px;
+    padding-left: 36px;
+    padding-right: 36px;
+  }
 </style>
