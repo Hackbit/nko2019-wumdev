@@ -40,11 +40,8 @@ io.on('connection', socket => {
         });
 
         socket.on('message', async message => {
-            // logic when message is sent
-            let msg = `${users[id].username} » ${message}`;
-
             socket.to('General').broadcast.emit('userMessage', {
-                message: msg,
+                message: message,
                 by: users[id].username,
                 color: randColor
             });
