@@ -45,10 +45,11 @@ io.on('connection', socket => {
         socket.on('message', async message => {
             // logic when message is sent
             let message = `${users[id].username} » ${message}`,
-                timestamp = Date.now()
+                timestamp = Date.now(),
+                encoded = new Buffer(message).toString('base64')
 
             socket.broadcast.emit('userMessage', {
-                message: message,
+                message: encoded,
                 by: users[id].username,
                 timestamp: timestamp
             });
