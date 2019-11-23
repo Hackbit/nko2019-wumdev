@@ -1,0 +1,24 @@
+{
+  "name": "nko2019-wumdev",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hackbit/nko2019-wumdev.git"
+  },
+  "author": "WumDev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Hackbit/nko2019-wumdev/issues"
+  },
+  "homepage": "https://github.com/Hackbit/nko2019-wumdev#readme",
+  "dependencies": {
+    "koa": "^2.11.0",
+    "koa-router": "^7.4.0"
+  }
+}
