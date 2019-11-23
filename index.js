@@ -24,6 +24,8 @@ io.on('connection', socket => {
     socket.join('General');
     socket.on('data', data => {
         if(!data.username) return socket.emit('error', { code: 0, msg: "Invalid username" });
+
+        socket.to('General').broadcast.emit('userJoin', data.username);
         let id = genId();
         let randColor = color(Math.floor(Math.random() * 20), 20);
         users[id] = {
@@ -39,14 +41,11 @@ io.on('connection', socket => {
 
         socket.on('message', async message => {
             // logic when message is sent
-            let msg = `${users[id].username} » ${message}`,
-                timestamp = new Date(Date.now()).toLocaleString("en-US"),
-                encoded = new Buffer(msg).toString('base64')
+            let msg = `${users[id].username} » ${message}`;
 
             socket.to('General').broadcast.emit('userMessage', {
-                message: encoded,
+                message: msg,
                 by: users[id].username,
-                timestamp: timestamp,
                 color: randColor
             });
         });
