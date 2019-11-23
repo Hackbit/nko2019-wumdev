@@ -56,6 +56,11 @@ io.on('connection', socket => {
     });
 });
 
+/**
+ * 
+ * @param {Number} length 
+ * @param {Number} maxLength 
+ */
 function color(length, maxLength) {
   var i = (length * 255) / maxLength;
   var r = Math.round(Math.sin(0.024 * i + 0) * 127 + 128);
