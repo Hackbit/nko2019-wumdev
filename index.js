@@ -14,23 +14,44 @@ app.use(bodyParser.json());
 app.use(express.static('./public'));
 
 let users = {};
+// let rooms = {
+//     "General": {
+//         "users": []
+//     }
+// };
 
 io.on('connection', socket => {
     socket.on('data', data => {
-        if(!data.username) return socket.emit('error', { msg: "Invalid username" });
+        if(!data.username) return socket.emit('error', { code: 0, msg: "Invalid username" });
         let id = genId();
         users[id] = {
             username: data.username,
-            socketId: socket.id
+            socketId: socket.id,
+            id: id
         }
 
         socket.emit("clientData", {
             color: color(Math.floor(Math.random() * 20), 20),
-            id: id
+            id: id,
+            rooms: Object.keys(rooms)
         });
 
-        socket.on('message', message => {
+        // socket.on('changeRoom', async room => {
+        //     let current = Object.keys(socket.rooms)[1];
+        //     await socket.leave(current);
+        //     joinRoom(socket, room)
+        // });
+
+        socket.on('message', async message => {
             // logic when message is sent
+            let message = `${users[id].username} » ${message}`,
+                timestamp = Date.now()
+
+            socket.broadcast({
+                message: message,
+                by: users[id].username,
+                timestamp: timestamp
+            });
         });
     });
 });
@@ -46,3 +67,17 @@ function color(length, maxLength) {
 function genId() {
     return new randExp(/[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{6}/).gen();
 }
+
+// /**
+//  * 
+//  * @param {SocketIO.Socket} socket 
+//  * @param {String} room 
+//  */
+// function joinRoom(socket, room) {
+//     let roomArr = Object.keys(rooms);
+//     if(!roomArr.find(a => a == room)) return socket.emit('error', { code: 1, msg: "Invalid room"} );
+//     if(rooms[room]["users"].find(a => a == users[id].id)) return;
+
+//     await socket.join(room)
+//     rooms[room]["users"].push(id);
+// }
