@@ -1,7 +1,5 @@
 const express = require('express');
 const app = express();
-const bodyParser = require('body-parser');
-const randExp = require('randexp');
 const dialogflow = require('dialogflow');
 const uuid = require('uuid');
 const request = require('request');
@@ -14,9 +12,6 @@ let server = app.listen(port, () => {
 
 const socket = require('socket.io');
 let io = socket(server);
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 
 app.use(express.static('./test'));
 
@@ -38,6 +33,7 @@ io.on('connection', socket => {
         if(allowed) {
             socket.to('General').broadcast.emit('userJoin', data.username);
             let id = genId();
+            if(usersKey.find(a => a == id)) id = genId();
             users[id] = {
                 username: data.username,
                 socketId: socket.id,
@@ -56,6 +52,7 @@ io.on('connection', socket => {
                 if(cmd == '@bot') {
                     if(args.join(' ').length > 0) {
                         let res = runSample(process.env.PROJECTID, args.join(' '), "en-US");
+                        console.log(res);
                         let display = res.intent.displayName,
                             confidence = res.intentDetectionConfidence;
                             fulfillment;
@@ -70,7 +67,7 @@ io.on('connection', socket => {
                         if(display == "Question") {
                             let url = process.env.CUSTOMSEARCH_URI+args.join('+');
                             request(url, (error, response) => {
-                                
+                                console.log(response)
                             });
                         }
                     }
@@ -92,7 +89,7 @@ io.on('connection', socket => {
 });
 
 function genId() {
-    return new randExp(/[0-9][0-9][0-9]/).gen();
+    return Math.floor(Math.random() * (1000 - 111)) + 111;
 }
 
 /**
