@@ -16,9 +16,11 @@
   import Vue from 'vue';
   import UserMessage from '../components/UserMessage';
   import io from 'socket.io-client';
+  import SysMessage from '../components/SysMessage';
 
   let MyMessage = Vue.extend(UserMessage);
   let OtherMessage = Vue.extend(BotMessage);
+  let Log = Vue.extend(SysMessage);
   let username = '';
 
   while (username === '') {
@@ -29,7 +31,6 @@
   let client = io('https://hackbit-nko2019-wumdev.glitch.me/');
 
   client.on('connect', () => {
-    console.log('Connected!');
     window.localStorage.setItem('username', username);
     client.emit('data', {username});
 
@@ -53,6 +54,22 @@
       }
     });
 
+    client.on('userJoin', username => {
+      let newLog = new Log();
+      newLog.$slots.default = [`${username} just joined the party!`];
+      newLog.$mount();
+      document.getElementById('messages').appendChild(newLog.$el);
+      setTimeout(()=>{window.scrollTo(0, document.body.scrollHeight);}, 1100);
+    });
+
+    client.on('userDisconnect', username => {
+      let newLog = new Log();
+      newLog.$slots.default = [`${username} just left the chat!`];
+      newLog.$mount();
+      document.getElementById('messages').appendChild(newLog.$el);
+      setTimeout(()=>{window.scrollTo(0, document.body.scrollHeight);}, 1100);
+    });
+
     client.on('userMessage', ({message, by, id}) => {
       let newMessage = new OtherMessage({propsData: {username: by, id: id.toString()}});
       newMessage.$slots.default = [ message ];
@@ -63,7 +80,7 @@
   });
 
   export default {
-    components: { UserMessage, BotMessage },
+    components: { SysMessage, UserMessage, BotMessage },
     data() {
       return {message: '', client}
     },

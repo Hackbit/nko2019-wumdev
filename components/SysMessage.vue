@@ -1,31 +1,21 @@
 <template>
-  <div class="self-start font-sans animated fadeInUp">
-    <div class="text-left text-gray-600 text-xs">{{ date }}</div>
-    <div class="self-start flex align-start">
-      <img :src="avatar" class="self-start text-xs avatar" :alt='username' :title="username"/>
-      <div class="bg-gray-400 text-black message tri-right left-top rounded-lg"><slot></slot></div>
-    </div>
+  <div class="self-center font-mono animated fadeInUp flex flex-col">
+    <div class="text-center text-gray-600 text-xs">{{ date }}</div>
+    <div class="self-center message rounded-lg bg-red-700 text-gray-100"><slot></slot></div>
   </div>
 </template>
 
 <script>
   export default {
-    props: ['id', 'username'],
-    name: 'bot-message',
+    name: 'sys-message',
     data() {
       return {
         date: this.timeSince(new Date()),
-        avatar: 'https://api.adorable.io/avatars/285/abott@adorable.png'
       };
-    },
-    created() {
-      if (parseInt(this.id) < 111)
-        this.avatar = `/botchat.png`;
-      else
-        this.avatar = `https://api.adorable.io/avatars/face/eyes${this.id.split('')[0]}/nose${this.id.split('')[1]}/mouth${this.id.split('')[2]}/${this.id}`;
     },
     methods: {
       timeSince(timeStamp) {
+        this.date = 'A few seconds ago';
         setInterval(() => {
           let now = new Date(),
             secondsPast = (now.getTime() - timeStamp.getTime()) / 1000;
@@ -61,21 +51,8 @@
     animation-duration: 0.5s;
   }
   .message {
-    width: fit-content;
     position: relative;
-    padding: 6px 12px 6px;
+    padding: 2px 12px 2px;
     margin-bottom: 8px;
-  }
-  .tri-right.left-top:after{
-    content: ' ';
-    position: absolute;
-    width: 0;
-    height: 0;
-    left: -12px;
-    right: auto;
-    top: 0;
-    bottom: auto;
-    border: 16px solid;
-    border-color: #CBD5E0 transparent transparent transparent;
   }
 </style>
