@@ -3,7 +3,9 @@ const app = express();
 const bodyParser = require('body-parser');
 const randExp = require('randexp');
 
-let server = app.listen(3000);
+let server = app.listen(3000, () => {
+    console.log("Server started");
+});
 
 const socket = require('socket.io');
 let io = socket(server);
@@ -19,6 +21,8 @@ io.on('connection', socket => {
     socket.join('General');
     socket.on('data', data => {
         if(!data.username) return socket.emit('error', { code: 0, msg: "Invalid username" });
+        let usersKey = Object.keys(users);
+        if(usersKey.find(a => a == data.username)) return socket.emit('error', { code: 3, msg: "user already used"})
 
         socket.to('General').broadcast.emit('userJoin', data.username);
         let id = genId();
