@@ -61,7 +61,8 @@ io.on('connection', socket => {
                             fulfillment = res.fulfillmentText;
                             socket.to('General').broadcast.emit('userMessage', {
                                 message: fulfillment,
-                                by: "Bot"
+                                by: "Bot",
+                                id: 101
                             });
                         }
                         if(display == "Question") {
@@ -75,7 +76,8 @@ io.on('connection', socket => {
 
                 socket.to('General').broadcast.emit('userMessage', {
                     message: message,
-                    by: users[id].username
+                    by: users[id].username,
+                    id
                 });
             });
 
