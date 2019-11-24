@@ -6,7 +6,8 @@ export default {
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: 'NKO 2019 project by WumDev. A chat bot capable of a lot.' },
-      { property: 'og:image', content: '/botchat.png'}
+      { property: 'og:image', content: '/botchat.png'},
+      { property: 'theme-color', content: '#00ff00'}
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
