@@ -1,17 +1,31 @@
 <template>
   <div class="self-start font-sans animated fadeInUp">
     <div class="text-left text-gray-600 text-xs">{{ date }}</div>
-    <div class="bg-gray-400 text-black message tri-right left-top rounded-lg"><slot></slot></div>
+    <div class="self-start flex align-start">
+      <img :src="avatar" class="self-start text-xs avatar" :alt='username' :title="username"/>
+      <div class="bg-gray-400 text-black message tri-right left-top rounded-lg"><slot></slot></div>
+    </div>
   </div>
 </template>
 
 <script>
   export default {
+    props: ['id', 'username'],
     name: 'bot-message',
     data() {
       return {
-        date: this.timeSince(new Date())
+        date: this.timeSince(new Date()),
+        avatar: 'https://api.adorable.io/avatars/285/abott@adorable.png'
       };
+    },
+    created() {
+      console.log(this.id);
+      console.log(parseInt(this.id));
+      console.log(parseInt(this.id) < 111);
+      if (parseInt(this.id) < 111)
+        this.avatar = `/botchat.png`;
+      else
+        this.avatar = `https://api.adorable.io/avatars/face/eyes${this.id.split('')[0]}/nose${this.id.split('')[1]}/mouth${this.id.split('')[2]}/${this.id}`;
     },
     methods: {
       timeSince(timeStamp) {
@@ -40,6 +54,12 @@
 </script>
 
 <style>
+  .avatar {
+    height: 32px;
+    width: 32px;
+    margin: 0 8px 8px;
+    border-radius: 50%;
+  }
   .animated {
     animation-duration: 0.5s;
   }
