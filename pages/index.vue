@@ -41,7 +41,17 @@
       }
     });
 
-    client.on('err', console.log);
+    client.on('err', ({code})=> {
+      init = false;
+      if (code === 0) {
+        username = prompt('Invalid username provided. Please re-enter a valid username!');
+        client.emit('data', {username});
+      }
+      if (code === 1) {
+        username = prompt('Username already in use. Please enter a new username!');
+        client.emit('data', {username})
+      }
+    });
 
     client.on('userMessage', ({message, by, id}) => {
       let newMessage = new OtherMessage({propsData: {username: by, id: id.toString()}});
