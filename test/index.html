@@ -25,45 +25,47 @@
     var username = getfield("Please enter your username");
     if (!username) username = getfield("Please enter your username");
 
-    var socket = io("http://nodeknockout2019proj.glitch.me/");
+    var socket = io("http://localhost:3000");
     var id;
 
     let init = false
-    socket.emit("data", {
-      username
-    });
+    socket.on('connected', () => {
+      socket.emit("data", {
+        username
+      });
 
-    socket.on("clientData", data => {
-      if (!init) {
-        id = data.id;
-        init = true;
-      }
-    });
+      socket.on("clientData", data => {
+        if (!init) {
+          id = data.id;
+          init = true;
+        }
+      });
 
-    const form = document.querySelector('form');
+      const form = document.querySelector('form');
 
-    socket.on('userMessage', function (msg) {
-      $('#messages').append($('<li>')).text(`${msg.by} » ${msg.message} - - - - ${new Date(Date.now())}`);
-    });
+      socket.on('userMessage', function (msg) {
+        $('#messages').append($('<li>')).text(`${msg.by} » ${msg.message} - - - - ${new Date(Date.now())}`);
+      });
 
-    socket.on('userJoin', u => {
-      $('#messages').append($('<li>')).text(`${u} joined - - - - ${new Date(Date.now())}`);
-    });
+      socket.on('userJoin', u => {
+        $('#messages').append($('<li>')).text(`${u} joined - - - - ${new Date(Date.now())}`);
+      });
 
-    socket.on('userDisconnect', u => {
-      $('#messages').append($('<li>')).text(`${u} left - - - - ${new Date(Date.now())}`);
-    });
+      socket.on('userDisconnect', u => {
+        $('#messages').append($('<li>')).text(`${u} left - - - - ${new Date(Date.now())}`);
+      });
 
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      if ($('#m').val() == '') return;
-      socket.emit('message', $('#m').val());
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        if ($('#m').val() == '') return;
+        socket.emit('message', $('#m').val());
 
-      $('#messages').append($('<li>')).text(`${username} » ${$('#m').val()} - - - - ${new Date(Date.now())}`);
+        $('#messages').append($('<li>')).text(`${username} » ${$('#m').val()} - - - - ${new Date(Date.now())}`);
 
-      $('#m').val('');
-      return;
-    });
+        $('#m').val('');
+        return;
+      });
+    })
 
     function getfield(txt) {
       return prompt(txt);
