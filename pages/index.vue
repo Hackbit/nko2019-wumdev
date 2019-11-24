@@ -86,8 +86,12 @@
       return {message: '', upvotes: 0}
     },
     created() {
-      fetch('https://crossorigin.me/https://www.nodeknockout.com/entries/84-wumdev/vote/stats').then(res=>res.json()).then(data => {
-        this.upvotes = data['vote_count'];
+      fetch('https://www.nodeknockout.com/entries/84-wumdev/vote/stats', {headers: {}}).then(res=>{
+        console.log(res);
+        return res.text();
+      }).then(data => {
+        console.log(data);
+        //this.upvotes = JSON.parse(data)['vote_count'];
       });
     },
     methods: {
