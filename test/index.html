@@ -34,6 +34,25 @@
         username
       });
 
+      socket.on('err', e => {
+        let err = e.code;
+        switch(err) {
+          case 0:
+            username = getfield('Invalid username! Please re-enter your username!');
+            socket.emit("data", {
+              username
+            });
+            break;
+
+          case 1:
+            username = getfield('Username is already been used! Please enter another username!');
+            socket.emit("data", {
+              username
+            });
+            break;
+        };
+      })
+
       socket.on("clientData", data => {
         if (!init) {
           id = data.id;
@@ -44,7 +63,7 @@
       const form = document.querySelector('form');
 
       socket.on('userMessage', function (msg) {
-        $('#messages').append($('<li>')).text(`${msg.by} » ${msg.message} - - - - ${new Date(Date.now())}`);
+        $('#messages').append('<li>').text(`${msg.by} » ${msg.message} - - - - ${new Date(Date.now())}`);
       });
 
       socket.on('userJoin', u => {

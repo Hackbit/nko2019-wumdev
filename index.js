@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const randExp = require('randexp');
 const dialogflow = require('dialogflow');
 const uuid = require('uuid');
-const dffUtils = require('dialogflow-fulfillment-utils');
+const request = require('request');
 require('dotenv').config();
 
 let port = process.env.PORT || 3000;
@@ -25,9 +25,9 @@ let users = {};
 io.on('connection', socket => {
     socket.join('General');
     socket.on('data', data => {
-        if(!data.username) return socket.emit('error', { code: 0, msg: "Invalid username" });
+        if(!data.username) return socket.emit('err', { code: 0, msg: "Invalid username" });
         let usersKey = Object.keys(users);
-        if(usersKey.find(a => a == data.username)) return socket.emit('error', { code: 3, msg: "user already used"})
+        if(usersKey.find(a => a == data.username)) return socket.emit('err', { code: 3, msg: "user already used"})
 
         socket.to('General').broadcast.emit('userJoin', data.username);
         let id = genId();
@@ -44,13 +44,26 @@ io.on('connection', socket => {
         socket.on('message', async message => {
             let msgArr = message.split(' ');
             let cmd = msgArr[0];
-            let args = msgArr.slice(1);
-            console.log(msgArr)
-            console.log(cmd)
-            console.log(args)
-            console.log(message)
+            let args = msgArr.slice(1, msgArr.length);
+
             if(cmd == '@bot') {
-                let res = runSample(process.env.PROJECTID, message, "en-US");
+                if(args.join(' ').length > 0) {
+                    let res = runSample(process.env.PROJECTID, args.join(' '), "en-US");
+                    let display = res.intent.displayName,
+                        confidence = res.intentDetectionConfidence;
+                        fulfillment;
+
+                    if(display == 'Compliment') {
+                        fulfillment = res.fulfillmentText;
+                        socket.to('General').broadcast.emit('userMessage', {
+                            message: fulfillment,
+                            by: "Bot"
+                        });
+                    }
+                    if(display == "Question") {
+                        let url = process.env.CUSTOMSEARCH_URI+args.join('+');
+                    }
+                }
             }
 
             socket.to('General').broadcast.emit('userMessage', {
@@ -94,8 +107,6 @@ async function runSample(projectId=null, text, lang="en-US") {
     };
    
     const responses = await sessionClient.detectIntent(request);
-    console.log(responses[0])
    
-    var messages = dffUtils.getMessages(responses);
     return responses[0];
   }
