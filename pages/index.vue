@@ -3,7 +3,7 @@
     <h1 class="text-6xl font-display z-10 top-0 inset-x-0 fixed w-full bg-gray-900" ref="title">BotChat</h1>
     <div class="w-full messages self-end flex-grow flex flex-col" id="messages" ref="messages">
       <sys-message>Welcome! This is botchat, a place where you can interact with our bot or people in the room real-time! To chat with the bot, you message should start with <code class="bg-yellow-300 text-red-800 font-sans">&nbsp;@bot </code>. To chat with others, any normal messages are fine.</sys-message>
-      <sys-message>This was made by WumDev for Node Knockout 2019. We would greatly appreciate it if you <a class="font-bold hover:text-black" href="http://www.nodeknockout.com/entries/84-wumdev/vote" target="_blank">up-vote</a> it. We currently have <span class="font-bold">{{ upvotes }} votes</span>.</sys-message>
+      <sys-message>This was made by WumDev for Node Knockout 2019. We would greatly appreciate it if you <a class="font-bold hover:text-black" href="http://www.nodeknockout.com/entries/84-wumdev/vote" target="_blank">up-vote</a> it.</sys-message>
     </div>
     <div class='flex p-2 bg-gray-900 w-full inset-x-0 z-10 fixed bottom-0 justify-center align-center'>
       <input id="messageBox" @keydown.enter="sendMessage" v-model="message" class="font-sans form-input block flex-grow bg-gray-300 mb-2 outline-none border text-blue-900 rounded-l-lg px-4" autofocus placeholder="Type a message" />
@@ -60,6 +60,7 @@
       newLog.$slots.default = [`${username} just joined the party!`];
       newLog.$mount();
       document.getElementById('messages').appendChild(newLog.$el);
+      window.scrollTo(0, document.body.scrollHeight);
       setTimeout(()=>{window.scrollTo(0, document.body.scrollHeight);}, 1100);
     });
 
@@ -68,6 +69,7 @@
       newLog.$slots.default = [`${username} just left the chat!`];
       newLog.$mount();
       document.getElementById('messages').appendChild(newLog.$el);
+      window.scrollTo(0, document.body.scrollHeight);
       setTimeout(()=>{window.scrollTo(0, document.body.scrollHeight);}, 1100);
     });
 
@@ -76,6 +78,7 @@
       newMessage.$slots.default = [ message ];
       newMessage.$mount();
       document.getElementById('messages').appendChild(newMessage.$el);
+      window.scrollTo(0, document.body.scrollHeight);
       setTimeout(()=>{window.scrollTo(0, document.body.scrollHeight);}, 1100);
     });
   });
