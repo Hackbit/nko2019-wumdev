@@ -1,20 +1,29 @@
 <template>
-  <div class="self-end font-sans animated fadeInUp">
+  <div class="self-end font-sans animated fadeInUp flex flex-col">
     <div class="text-left text-gray-600 text-xs">{{ date }}</div>
-    <div class="tri-right message right-top rounded-lg bg-green-700 text-gray-100"><slot></slot></div>
+    <div class="self-end flex align-start">
+      <div class="tri-right message right-top rounded-lg bg-green-700 text-gray-100"><slot></slot></div>
+      <img :src="avatar" class="self-end text-xs avatar" :alt='username' :title="username"/>
+    </div>
   </div>
 </template>
 
 <script>
   export default {
+    props: ['username', 'id'],
     name: 'user-message',
     data() {
       return {
-        date: this.timeSince(new Date())
+        date: this.timeSince(new Date()),
+        avatar: 'https://api.adorable.io/avatars/285/abott@adorable.png'
       };
+    },
+    created() {
+      this.avatar = `https://api.adorable.io/avatars/face/eyes${this.id.split('')[0]}/nose${this.id.split('')[1]}/mouth${this.id.split('')[2]}/${this.id}`;
     },
     methods: {
       timeSince(timeStamp) {
+        this.date = 'A few seconds ago';
         setInterval(() => {
           let now = new Date(),
             secondsPast = (now.getTime() - timeStamp.getTime()) / 1000;
@@ -40,6 +49,12 @@
 </script>
 
 <style>
+  .avatar {
+    height: 32px;
+    width: 32px;
+    margin: 0 8px 8px;
+    border-radius: 50%;
+  }
   .animated {
     animation-duration: 0.5s;
   }
