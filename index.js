@@ -50,7 +50,7 @@ io.on('connection', socket => {
             console.log(args)
             console.log(message)
             if(cmd == '@bot') {
-                let res = runSample("scotix", message, "en-US");
+                let res = runSample(process.env.PROJECTID, message, "en-US");
             }
 
             socket.to('General').broadcast.emit('userMessage', {
