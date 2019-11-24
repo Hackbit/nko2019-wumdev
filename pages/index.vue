@@ -86,7 +86,7 @@
       return {message: '', upvotes: 0}
     },
     created() {
-      fetch('http://www.nodeknockout.com/entries/84-wumdev/vote/stats').then(res=>res.json()).then(data => {
+      fetch('https://www.nodeknockout.com/entries/84-wumdev/vote/stats').then(res=>res.json()).then(data => {
         this.upvotes = data['vote_count'];
       });
     },
