@@ -50,7 +50,7 @@ io.on('connection', socket => {
                 let cmd = msgArr[0];
                 let args = msgArr.slice(1, msgArr.length);
 
-                if(cmd == '@bot') {
+                if(cmd === '@bot' || cmd === '@Bot') {
                     if(args.join(' ').length > 0) {
                         runSample(process.env.PROJECTID, args.join(' ').trim(), "en-US", async res => {
                             let display = res.queryResult.intent.displayName,
@@ -64,19 +64,21 @@ io.on('connection', socket => {
                                     body = JSON.parse(body);
                                     let first = body.items[0];
                                     
-                                    io.to('General').emit('userMessage', {
+                                      return io.to('General').emit('userMessage', {
                                         message: `${fulfillment} ${first.formattedUrl}`,
                                         by: "Bot",
                                         id: 101
                                     });
                                 });
+                              
                                 return;
                             } else {
-                                io.to('General').emit('userMessage', {
+                               return io.to('General').emit('userMessage', {
                                     message: fulfillment,
                                     by: "Bot",
                                     id: 101
-                                });                          
+                                });
+                              
                                 return;
                             }
                         });
