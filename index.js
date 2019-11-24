@@ -45,7 +45,7 @@ io.on('connection', socket => {
             let cmd = msgArr[0];
             let args = msgArr.slice(1);
             if(cmd == '@bot') {
-                let res = runSample('scotix', text, "en-US");
+                let res = runSample(process.env.PROJECTID, text, "en-US");
             }
 
             socket.to('General').broadcast.emit('userMessage', {
@@ -71,7 +71,8 @@ function genId() {
  * @param {string} text
  * @param {string} lang
  */
-async function runSample(projectId = 'scotix', text, lang="en-US") {
+async function runSample(projectId=null, text, lang="en-US") {
+    if(!projectId) throw new Error("Invalid projectId")
     const sessionId = uuid.v4();
 
     const sessionClient = new dialogflow.SessionsClient();
