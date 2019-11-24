@@ -70,6 +70,44 @@ io.on('connection', socket => {
                                         id: 101
                                     });
                                 });
+                            } else if(display == 'Convert-Crypto') {
+                                let from = res.queryResult.parameters["targetMonetarySpec"][0],
+                                    to = res.queryResult.parameters["cryptocurrency"][0],
+                                    amount = res.queryResult.parameters['amount'].toString();
+
+                                let list = require('./cryplist.json');
+                                let cryptoArr = Object.keys(list.crypto);
+                                let fiatArr = Object.keys(list.fiat);
+                                if(from.length > 3) {
+                                    cryptoArr.forEach(a => {
+                                        if(list[a].name.toLowerCase() == from.toLowerCase()) from = a;
+                                    });
+                                    fiatArr.forEach(a => {
+                                        if(list[a].name.toLowerCase() == from.toLowerCase()) from = a;
+                                    });
+                                }
+                                if(crypto.length > 3) {
+                                    cryptoArr.forEach(a => {
+                                        if(list[a].name.toLowerCase() == to.toLowerCase()) to = a;
+                                    });
+                                    fiatArr.forEach(a => {
+                                        if(list[a].name.toLowerCase() == to.toLowerCase()) to = a;
+                                    });
+                                }
+                                if(cryptoArr.find(a => a == crypto) || fiatArr.find(a => a == crypto)) {
+                                    if(fiatArr.find(a => a == from) || cryptoArr.find(a => a == from)) {
+                                        request(`http://api.coinlayer.com/api/convert?access_key=${process.env.APIKEY}&from=${from}&to=${to}&amount=${amount}`, (e, res, body) => {
+                                            if(e) console.log(e);
+                                            body = JSON.parse(body);
+
+                                            io.to('General').emit('userMessage', {
+                                                message: `${from} to ${to}: ${body.result} ${to}`,
+                                                by: "Bot",
+                                                id: 101
+                                            });
+                                        });
+                                    }
+                                }
                             } else {
                                 io.to('General').emit('userMessage', {
                                     message: fulfillment,
