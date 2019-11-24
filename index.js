@@ -70,12 +70,16 @@ io.on('connection', socket => {
                                         id: 101
                                     });
                                 });
+                              
+                                return;
                             } else {
                                 io.to('General').emit('userMessage', {
                                     message: fulfillment,
                                     by: "Bot",
                                     id: 101
                                 });
+                              
+                                return;
                             }
                         });
                     }
