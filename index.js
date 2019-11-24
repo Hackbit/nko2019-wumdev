@@ -78,7 +78,7 @@ io.on('connection', socket => {
                                     });
                                 });
                             }
-                            if(display == 'Bot-Related') {
+                            if(display == 'Bot-About') {
                                 io.to('General').emit('userMessage', {
                                     message: fulfillment,
                                     by: "Bot",
