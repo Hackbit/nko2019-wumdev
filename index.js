@@ -5,6 +5,7 @@ const randExp = require('randexp');
 const dialogflow = require('dialogflow');
 const uuid = require('uuid');
 const dffUtils = require('dialogflow-fulfillment-utils');
+require('dotenv').config();
 
 let port = process.env.PORT || 3000;
 let server = app.listen(port, () => {
@@ -17,7 +18,7 @@ let io = socket(server);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use(express.static('./public'));
+app.use(express.static('./test'));
 
 let users = {};
 
