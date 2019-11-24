@@ -91,7 +91,7 @@ io.on('connection', socket => {
                 socket.to('General').broadcast.emit('userMessage', {
                     message: message,
                     by: users[id].username,
-                    id: id
+                    id
                 });
             });
 
