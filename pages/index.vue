@@ -6,7 +6,7 @@
       <sys-message>This was made by WumDev for Node Knockout 2019. We would greatly appreciate it if you <a class="font-bold hover:text-black" href="http://www.nodeknockout.com/entries/84-wumdev/vote" target="_blank">up-vote</a> it.</sys-message>
     </div>
     <div class='flex p-2 bg-gray-900 w-full inset-x-0 z-10 fixed bottom-0 justify-center align-center'>
-      <input id="messageBox" @keydown.enter="sendMessage" v-model="message" class="font-sans form-input block flex-grow bg-gray-300 mb-2 outline-none border text-blue-900 rounded-l-lg px-4" autofocus placeholder="Type a message" />
+      <input id="messageBox" @keydown.enter="sendMessage" v-model="message" class="font-sans form-input block flex-grow bg-gray-300 mb-2 outline-none border text-blue-900 rounded-l-lg px-4" autofocus autocomplete="off" placeholder="Type a message" />
       <button @click="sendMessage" id="send" class='rounded-r-lg px-3 py-2 bg-gray-500 text-black hover:bg-gray-600 mb-2 outline-none font-sans'>Send</button>
     </div>
   </div>
@@ -87,15 +87,6 @@
     components: { SysMessage, UserMessage, BotMessage },
     data() {
       return {message: '', upvotes: 0}
-    },
-    created() {
-      fetch('https://www.nodeknockout.com/entries/84-wumdev/vote/stats', {headers: {}}).then(res=>{
-        console.log(res);
-        return res.text();
-      }).then(data => {
-        console.log(data);
-        //this.upvotes = JSON.parse(data)['vote_count'];
-      });
     },
     methods: {
       sendMessage() {
