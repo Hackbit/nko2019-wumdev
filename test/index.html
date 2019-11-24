@@ -29,7 +29,7 @@
     var id;
 
     let init = false
-    socket.on('connected', () => {
+    socket.on('connect', () => {
       socket.emit("data", {
         username
       });
