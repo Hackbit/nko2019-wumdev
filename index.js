@@ -57,13 +57,6 @@ io.on('connection', socket => {
                                 confidence = res.intentDetectionConfidence,
                                 fulfillment = res.queryResult.fulfillmentText;;
 
-                            if(display == 'Compliment') {
-                                await io.to('General').emit('userMessage', {
-                                    message: fulfillment,
-                                    by: "Bot",
-                                    id: 101
-                                });
-                            }
                             if(display == "Question") {
                                 let url = process.env.CUSTOMSEARCH_URI+args.join('+');
                                 request(url, (e, res, body) => {
@@ -77,8 +70,7 @@ io.on('connection', socket => {
                                         id: 101
                                     });
                                 });
-                            }
-                            if(display == 'Bot-About') {
+                            } else {
                                 io.to('General').emit('userMessage', {
                                     message: fulfillment,
                                     by: "Bot",
