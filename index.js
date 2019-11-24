@@ -51,31 +51,39 @@ io.on('connection', socket => {
 
                 if(cmd == '@bot') {
                     if(args.join(' ').length > 0) {
-                        let res = runSample(process.env.PROJECTID, args.join(' '), "en-US");
-                        console.log(res);
-                        let display = res.intent.displayName,
-                            confidence = res.intentDetectionConfidence;
-                            fulfillment;
+                        runSample(process.env.PROJECTID, args.join(' ').trim(), "en-US", async res => {
+                            let display = res.queryResult.intent.displayName,
+                                confidence = res.intentDetectionConfidence,
+                                fulfillment = res.queryResult.fulfillmentText;;
 
-                        if(display == 'Compliment') {
-                            fulfillment = res.fulfillmentText;
-                            socket.to('General').broadcast.emit('userMessage', {
-                                message: fulfillment,
-                                by: "Bot"
-                            });
-                        }
-                        if(display == "Question") {
-                            let url = process.env.CUSTOMSEARCH_URI+args.join('+');
-                            request(url, (error, response) => {
-                                console.log(response)
-                            });
-                        }
+                            if(display == 'Compliment') {
+                                await io.to('General').emit('userMessage', {
+                                    message: fulfillment,
+                                    by: "Bot",
+                                    id: 101
+                                });
+                            }
+                            if(display == "Question") {
+                                let url = process.env.CUSTOMSEARCH_URI+args.join('+');
+                                request(url, (error, response, body) => {
+                                    body = JSON.parse(body);
+                                    let first = body.items[0];
+                                    
+                                    io.to('General').emit('userMessage', {
+                                        message: `${fulfillment} ${first.formattedUrl}`,
+                                        by: "Bot",
+                                        id: 101
+                                    });
+                                });
+                            }
+                        });
                     }
                 }
 
                 socket.to('General').broadcast.emit('userMessage', {
                     message: message,
-                    by: users[id].username
+                    by: users[id].username,
+                    id: id
                 });
             });
 
@@ -90,15 +98,16 @@ io.on('connection', socket => {
 
 function genId() {
     return Math.floor(Math.random() * (1000 - 111)) + 111;
-}
+};
 
 /**
  * Send a query to the dialogflow agent, and return the query result.
  * @param {string} projectId The project to be used
  * @param {string} text
  * @param {string} lang
+ * @param {function} callback
  */
-async function runSample(projectId=null, text, lang="en-US") {
+async function runSample(projectId=null, text, lang="en-US", callback) {
     if(!projectId) throw new Error("Invalid projectId")
     const sessionId = uuid.v4();
 
@@ -114,8 +123,8 @@ async function runSample(projectId=null, text, lang="en-US") {
         },
       },
     };
-   
-    const responses = await sessionClient.detectIntent(request);
-   
-    return responses[0];
+    
+    await sessionClient.detectIntent(request).then(res => {
+        return callback(res[0]);
+    });
   }

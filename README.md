@@ -53,6 +53,7 @@ Connect to server & Events
         msg {
             message
             by
+            id
         }
     });
 		  
