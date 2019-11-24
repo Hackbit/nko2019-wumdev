@@ -2,9 +2,13 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const randExp = require('randexp');
+const dialogflow = require('dialogflow');
+const uuid = require('uuid');
+const dffUtils = require('dialogflow-fulfillment-utils');
 
-let server = app.listen(3000, () => {
-    console.log("Server started");
+let port = process.env.PORT || 3000;
+let server = app.listen(port, () => {
+    console.log("Server started, listening to port: "+port);
 });
 
 const socket = require('socket.io');
@@ -37,6 +41,13 @@ io.on('connection', socket => {
         });
 
         socket.on('message', async message => {
+            let msgArr = message.split(' ');
+            let cmd = msgArr[0];
+            let args = msgArr.slice(1);
+            if(cmd == '@bot') {
+                let res = runSample('scotix', text, "en-US");
+            }
+
             socket.to('General').broadcast.emit('userMessage', {
                 message: message,
                 by: users[id].username
@@ -53,3 +64,33 @@ io.on('connection', socket => {
 function genId() {
     return new randExp(/[0-9][0-9][0-9]/).gen();
 }
+
+/**
+ * Send a query to the dialogflow agent, and return the query result.
+ * @param {string} projectId The project to be used
+ * @param {string} text
+ * @param {string} lang
+ */
+async function runSample(projectId = 'scotix', text, lang="en-US") {
+    const sessionId = uuid.v4();
+
+    const sessionClient = new dialogflow.SessionsClient();
+    const sessionPath = sessionClient.sessionPath(projectId, sessionId);
+
+    const request = {
+      session: sessionPath,
+      queryInput: {
+        text: {
+          text: text,
+          languageCode: lang,
+        },
+      },
+    };
+   
+    const responses = await sessionClient.detectIntent(request);
+    console.log(responses[0])
+   
+    var messages = dffUtils.getMessages(responses);
+    console.log(messages)
+    return responses[0];
+  }

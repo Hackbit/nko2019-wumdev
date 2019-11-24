@@ -10,76 +10,58 @@ __Current Features:__
 
 ### Server
 
-Install dependencies
+Install the dependencies
 ```js
 npm i
 ```
-Defining the dependencies
+Start the server
 ```js
-const express = require('express');
-const app = express();
-
-const server = require('http').Server(app);
-const io = require('socket.io')(server);
-const randExp = require('randexp');
-...
-server.listen(3000); // Listen to port 3000
-```
-(Optional) Set the front-end HTML/CSS/JS
-```js
-app.use(express.static('./public'))
+npm start
 or
-app.get('/', (req, res) => res.sendFile(__dirname+'/public/index.html'))
-```
-Use Socket.IO
-```js
-io.on('connection', socket => {
-    socket.join('General'); // Make sure the user is connected to a room
-    socket.on('data', ...);
-});
-```
-Socket User Data Event Listener
-```js
-socket.on('data', data => {
-    if(!data.username) return socket.emit('error', { code: 0, msg: "Invalid username" });
-		
-    socket.to('General').broadcast.emit('userJoin', data.username); // UserJoin Event
-}
-```
-Register/Save user to a Global Variable
-```js
-let users = {};
-...
-let id = genId(); // Generate an Unique ID
-let randColor = color(Math.floor(Math.random() * 20), 20); // Generate random color
-users[id] = {
-    username: data.username,
-    socketId: socket.id,
-    id: id,
-    color: randColor
-}
-
-socket.emit("clientData", { // Send the date to the client
-    color: randColor,
-    id: id
-});
-```
-Message Listener & Broadcast Message
-```js
-socket.on('message', async message => {
-    socket.to('General').broadcast.emit('userMessage', {
-        message: message,
-        by: users[id].username,
-        color: randColor
-    });
-});
-```
-Disconnect Event Listener & Broadcast User Disconnection
-```js
-socket.on("disconnect", async () => {
-    await socket.broadcast.emit("userDisconnect", users[id].username);
-    delete users[id] // Delte the user from the Global Variable
-});
+node index.js
 ```
 
 ### Client
+
+Import Socket.IO
+```js
+// Javascript/HTML
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script> // Via CDN
+// Node.js
+const io = require('socket.io-client');
+// ES6
+import io from 'socket.io-client';
+```
+Connect to server & Events
+```js
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<script>
+    // Initialize
+    var socket = io('http://localhost:3000');
+    socket.emit('data', function() { // Must be emitted first 
+        username
+    });
+    socket.on('clientData', function(data) {
+        id
+    });
+
+    // Send Message
+    socket.emit('message', "message");
+
+    // User Events
+    socket.on('userMessage', function(msg) {
+        msg {
+            message
+            by
+        }
+    });
+		  
+	socket.on('userJoin', function(u) {
+        username
+    });
+		  
+	socket.on('userDisconnect', u => {
+        username
+    });
+</script>
+```
