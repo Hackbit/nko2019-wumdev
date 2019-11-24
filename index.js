@@ -22,7 +22,6 @@ io.on('connection', socket => {
 
         socket.to('General').broadcast.emit('userJoin', data.username);
         let id = genId();
-        let randColor = color(Math.floor(Math.random() * 20), 20);
         users[id] = {
             username: data.username,
             socketId: socket.id,
@@ -30,15 +29,13 @@ io.on('connection', socket => {
         }
 
         socket.emit("clientData", {
-            color: randColor,
             id: id
         });
 
         socket.on('message', async message => {
             socket.to('General').broadcast.emit('userMessage', {
                 message: message,
-                by: users[id].username,
-                color: randColor
+                by: users[id].username
             });
         });
 
@@ -49,19 +46,6 @@ io.on('connection', socket => {
     });
 });
 
-/**
- * 
- * @param {Number} length 
- * @param {Number} maxLength 
- */
-function color(length, maxLength) {
-  var i = (length * 255) / maxLength;
-  var r = Math.round(Math.sin(0.024 * i + 0) * 127 + 128);
-  var g = Math.round(Math.sin(0.024 * i + 2) * 127 + 128);
-  var b = Math.round(Math.sin(0.024 * i + 4) * 127 + 128);
-  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-}
-
 function genId() {
-    return new randExp(/[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{6}/).gen();
+    return new randExp(/[0-9][0-9][0-9]/).gen();
 }
