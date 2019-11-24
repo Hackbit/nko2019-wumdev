@@ -91,6 +91,5 @@ async function runSample(projectId = 'scotix', text, lang="en-US") {
     console.log(responses[0])
    
     var messages = dffUtils.getMessages(responses);
-    console.log(messages)
     return responses[0];
   }
