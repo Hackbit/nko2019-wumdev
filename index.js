@@ -18,6 +18,7 @@ app.use(express.static('./test'));
 let users = {};
 
 io.on('connection', socket => {
+    console.log(`a User joined with socket id: ${socket.id}`);
     socket.join('General');
     socket.on('data', data => {
         if(!data.username) return socket.emit('err', { code: 0, msg: "Invalid username" });
@@ -96,6 +97,7 @@ io.on('connection', socket => {
             });
 
             socket.on("disconnect", async () => {
+                console.log(`a User disconnected with socket id: ${socket.id}`)
                 await socket.broadcast.emit("userDisconnect", users[id].username);
                 delete users[id]
             });  
