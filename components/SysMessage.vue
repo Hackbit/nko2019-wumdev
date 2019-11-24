@@ -1,7 +1,7 @@
 <template>
   <div class="self-center font-mono animated fadeInUp flex flex-col">
     <div class="text-center text-gray-600 text-xs">{{ date }}</div>
-    <div class="self-center message rounded-lg bg-red-700 text-gray-100"><slot></slot></div>
+    <div class="self-center message rounded-lg bg-red-600 text-gray-100"><slot></slot></div>
   </div>
 </template>
 
