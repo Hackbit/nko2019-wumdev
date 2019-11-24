@@ -27,55 +27,67 @@ io.on('connection', socket => {
     socket.on('data', data => {
         if(!data.username) return socket.emit('err', { code: 0, msg: "Invalid username" });
         let usersKey = Object.keys(users);
-        if(usersKey.find(a => a == data.username)) return socket.emit('err', { code: 3, msg: "user already used"})
-
-        socket.to('General').broadcast.emit('userJoin', data.username);
-        let id = genId();
-        users[id] = {
-            username: data.username,
-            socketId: socket.id,
-            id: id
-        }
-
-        socket.emit("clientData", {
-            id: id
+        let allowed = true;
+        usersKey.forEach((a) => {
+            if(users[a].username == data.username) {
+                allowed = false;
+                return socket.emit('err', { code: 1, msg: "user already used"});
+            }
         });
 
-        socket.on('message', async message => {
-            let msgArr = message.split(' ');
-            let cmd = msgArr[0];
-            let args = msgArr.slice(1, msgArr.length);
-
-            if(cmd == '@bot') {
-                if(args.join(' ').length > 0) {
-                    let res = runSample(process.env.PROJECTID, args.join(' '), "en-US");
-                    let display = res.intent.displayName,
-                        confidence = res.intentDetectionConfidence;
-                        fulfillment;
-
-                    if(display == 'Compliment') {
-                        fulfillment = res.fulfillmentText;
-                        socket.to('General').broadcast.emit('userMessage', {
-                            message: fulfillment,
-                            by: "Bot"
-                        });
-                    }
-                    if(display == "Question") {
-                        let url = process.env.CUSTOMSEARCH_URI+args.join('+');
-                    }
-                }
+        if(allowed) {
+            socket.to('General').broadcast.emit('userJoin', data.username);
+            let id = genId();
+            users[id] = {
+                username: data.username,
+                socketId: socket.id,
+                id: id
             }
 
-            socket.to('General').broadcast.emit('userMessage', {
-                message: message,
-                by: users[id].username
+            socket.emit("clientData", {
+                id: id
             });
-        });
 
-        socket.on("disconnect", async () => {
-            await socket.broadcast.emit("userDisconnect", users[id].username);
-            delete users[id]
-        });
+            socket.on('message', async message => {
+                let msgArr = message.split(' ');
+                let cmd = msgArr[0];
+                let args = msgArr.slice(1, msgArr.length);
+
+                if(cmd == '@bot') {
+                    if(args.join(' ').length > 0) {
+                        let res = runSample(process.env.PROJECTID, args.join(' '), "en-US");
+                        let display = res.intent.displayName,
+                            confidence = res.intentDetectionConfidence;
+                            fulfillment;
+
+                        if(display == 'Compliment') {
+                            fulfillment = res.fulfillmentText;
+                            socket.to('General').broadcast.emit('userMessage', {
+                                message: fulfillment,
+                                by: "Bot"
+                            });
+                        }
+                        if(display == "Question") {
+                            let url = process.env.CUSTOMSEARCH_URI+args.join('+');
+                            request(url, (error, response) => {
+                                
+                            });
+                        }
+                    }
+                }
+
+                socket.to('General').broadcast.emit('userMessage', {
+                    message: message,
+                    by: users[id].username
+                });
+            });
+
+            socket.on("disconnect", async () => {
+                console.log('dc')
+                await socket.broadcast.emit("userDisconnect", users[id].username);
+                delete users[id]
+            });  
+        }
     });
 });
 

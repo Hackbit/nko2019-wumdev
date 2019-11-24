@@ -38,7 +38,7 @@ Connect to server & Events
 <script>
     // Initialize
     var socket = io('http://localhost:3000');
-    socket.emit('data', function() { // Must be emitted first 
+    socket.emit('data', { // Must be emitted first 
         username
     });
     socket.on('clientData', function(data) {
