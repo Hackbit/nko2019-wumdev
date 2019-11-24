@@ -23,7 +23,7 @@
   <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
 	<script>
     var username = getfield("Please enter your username");
-    if (!username) username = getfield("Please enter your username");
+	while(username == '') username = getfield("Please enter your username");
 
     var socket = io("http://localhost:3000");
     var id;

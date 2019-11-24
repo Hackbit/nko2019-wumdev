@@ -66,3 +66,74 @@ Connect to server & Events
     });
 </script>
 ```
+Example:
+```html
+<script>
+    var username = getfield("Please enter your username");
+    while(username == '') username = getfield("Please enter your username");
+
+    var socket = io("http://localhost:3000");
+    var id;
+
+    let init = false
+    socket.on('connect', () => {
+      socket.emit("data", {
+        username
+      });
+
+      socket.on('err', e => {
+        let err = e.code;
+        switch(err) {
+          case 0:
+            username = getfield('Invalid username! Please re-enter your username!');
+            socket.emit("data", {
+              username
+            });
+            break;
+
+          case 1:
+            username = getfield('Username is already been used! Please enter another username!');
+            socket.emit("data", {
+              username
+            });
+            break;
+        };
+      })
+
+      socket.on("clientData", data => {
+        if (!init) {
+          id = data.id;
+          init = true;
+        }
+      });
+
+      const form = document.querySelector('form');
+
+      socket.on('userMessage', function (msg) {
+        $('#messages').append('<li>').text(`${msg.by} » ${msg.message} - - - - ${new Date(Date.now())}`);
+      });
+
+      socket.on('userJoin', u => {
+        $('#messages').append($('<li>')).text(`${u} joined - - - - ${new Date(Date.now())}`);
+      });
+
+      socket.on('userDisconnect', u => {
+        $('#messages').append($('<li>')).text(`${u} left - - - - ${new Date(Date.now())}`);
+      });
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        if ($('#m').val() == '') return;
+        socket.emit('message', $('#m').val());
+
+        $('#messages').append($('<li>')).text(`${username} » ${$('#m').val()} - - - - ${new Date(Date.now())}`);
+
+        $('#m').val('');
+        return;
+      });
+    })
+
+    function getfield(txt) {
+      return prompt(txt);
+    }
+</script>

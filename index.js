@@ -65,7 +65,8 @@ io.on('connection', socket => {
                             }
                             if(display == "Question") {
                                 let url = process.env.CUSTOMSEARCH_URI+args.join('+');
-                                request(url, (error, response, body) => {
+                                request(url, (e, res, body) => {
+                                    if(e) console.log(e);
                                     body = JSON.parse(body);
                                     let first = body.items[0];
                                     
@@ -74,6 +75,13 @@ io.on('connection', socket => {
                                         by: "Bot",
                                         id: 101
                                     });
+                                });
+                            }
+                            if(display == 'Bot-Related') {
+                                io.to('General').emit('userMessage', {
+                                    message: fulfillment,
+                                    by: "Bot",
+                                    id: 101
                                 });
                             }
                         });
@@ -88,7 +96,6 @@ io.on('connection', socket => {
             });
 
             socket.on("disconnect", async () => {
-                console.log('dc')
                 await socket.broadcast.emit("userDisconnect", users[id].username);
                 delete users[id]
             });  
