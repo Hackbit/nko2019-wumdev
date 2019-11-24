@@ -45,8 +45,12 @@ io.on('connection', socket => {
             let msgArr = message.split(' ');
             let cmd = msgArr[0];
             let args = msgArr.slice(1);
+            console.log(msgArr)
+            console.log(cmd)
+            console.log(args)
+            console.log(message)
             if(cmd == '@bot') {
-                let res = runSample(process.env.PROJECTID, text, "en-US");
+                let res = runSample("scotix", message, "en-US");
             }
 
             socket.to('General').broadcast.emit('userMessage', {
