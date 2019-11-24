@@ -70,6 +70,7 @@ io.on('connection', socket => {
                                         id: 101
                                     });
                                 });
+                                return;
                             } else if(display == 'Convert-Crypto') {
                                 let from = res.queryResult.parameters["targetMonetarySpec"][0],
                                     to = res.queryResult.parameters["cryptocurrency"][0],
@@ -108,12 +109,14 @@ io.on('connection', socket => {
                                         });
                                     }
                                 }
+                                return;
                             } else {
                                 io.to('General').emit('userMessage', {
                                     message: fulfillment,
                                     by: "Bot",
                                     id: 101
-                                });
+                                });                          
+                                return;
                             }
                         });
                     }
